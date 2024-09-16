@@ -1,0 +1,55 @@
+{
+    "$schema": "https://www.raycast.com/schemas/extension.json",
+    "name": "lunchmoney",
+    "title": "Lunch Money",
+    "description": "Lunch Money is a personal finance app that helps you track your spending, manage your budget, and reach your financial goals.",
+    "icon": "assets/icon.png",
+    "author": "Soof",
+    "license": "MIT",
+    "commands": [
+        {
+            "name": "index",
+            "title": "Browse",
+            "description": "Browse your transactions",
+            "mode": "view"
+        }
+    ],
+    "dependencies": {
+        "@raycast/api": "1.31.0",
+        "axios": "^1.7.7",
+        "nanoid": "^3.3.1"
+    },
+    "devDependencies": {
+        "@types/node": "~16.10.0",
+        "@types/react": "^17.0.28",
+        "@typescript-eslint/eslint-plugin": "^5.0.0",
+        "@typescript-eslint/parser": "^5.0.0",
+        "eslint": "^7.32.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-react": "^7.29.3",
+        "eslint-plugin-react-hooks": "^4.3.0",
+        "react-devtools": "^4.19.2",
+        "typescript": "^4.4.3"
+    },
+    "scripts": {
+        "build": "ray build -e dist",
+        "dev": "ray develop"
+    },
+    "preferences": [
+        {
+            "name": "LUNCH_MONEY_API_KEY",
+            "type": "password",
+            "required": true,
+            "title": "Lunch Money API Key",
+            "description": "Your Lunch Money API key"
+        },
+        {
+            "name": "DEFAULT_CURRENCY",
+            "type": "textfield",
+            "default": "USD",
+            "title": "Default Currency",
+            "description": "Select your preferred default currency for displaying amounts.",
+            "required": true
+        }
+    ]
+}
