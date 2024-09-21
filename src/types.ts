@@ -14,6 +14,7 @@ export interface Transaction {
   notes?: string;
   category_id?: number;
   status: "cleared" | "uncleared" | "recurring";
+  asset_id: number;
 }
 
 export interface Category {
@@ -45,4 +46,16 @@ export interface RecurringTransaction {
 export interface Preferences {
   LUNCH_MONEY_API_KEY: string;
   DEFAULT_CURRENCY: string;
+}
+
+export interface Asset {
+  id: number;
+  name: string;
+  display_name: string;
+  balance: number;
+  balance_as_of: string;
+  currency: string;
+  type: string;
+  subtype: string | null;
+  status: 'active' | 'closed';
 }

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getPreferenceValues } from "@raycast/api";
-import { Transaction, Category, RecurringTransaction, Preferences } from "./types"; // Ensure Preferences is imported
+import { Transaction, Category, RecurringTransaction, Preferences, Asset } from "./types"; // Ensure Preferences is imported
 
 const preferences = getPreferenceValues<Preferences>();
 
@@ -70,8 +70,9 @@ export async function createTransaction(
           amount: transaction.amount,
           category_id: transaction.category_id,
           payee: transaction.payee,
-          currency: transaction.currency, // Ensure uppercase
+          currency: transaction.currency,
           notes: transaction.notes,
+          asset_id: transaction.asset_id,
         },
       ],
     };
@@ -92,14 +93,15 @@ export async function createTransaction(
       ...transaction,
       id: createdId,
       status: "uncleared",
-      to_base: transaction.amount, // safe assumtion
-      currency: transaction.currency.toUpperCase(), // Ensure uppercase
+      to_base: transaction.amount, // Assuming the amount is in the base currency
+      currency: transaction.currency.toUpperCase(),
     } as Transaction;
   } catch (error) {
     console.error("API Error:", error);
     throw error;
   }
 }
+
 export async function updateTransaction(id: number, updates: Partial<Omit<Transaction, 'id' | 'status'>>): Promise<Transaction> {
   try {
     const response = await api.put(`/transactions/${id}`, updates);
@@ -128,6 +130,31 @@ export async function fetchCategories(): Promise<Category[]> {
       console.error('Axios error details:', error.response?.data);
     }
     throw new Error('Invalid response from API');
+  }
+}
+
+export async function fetchAssets(): Promise<Asset[]> {
+  try {
+    const response = await api.get("/assets");
+    console.log("Assets API response:", response.data);
+    if (response.data && Array.isArray(response.data.assets)) {
+      return response.data.assets.map((asset: any) => ({
+        id: asset.id,
+        name: asset.name,
+        display_name: asset.display_name,
+        balance: Number(asset.balance),
+        balance_as_of: asset.balance_as_of,
+        currency: asset.currency.toUpperCase(),
+        type: asset.type_name,
+        subtype: asset.subtype_name,
+        status: asset.closed_on ? 'closed' : 'active',
+      }));
+    } else {
+      throw new Error('Invalid response format');
+    }
+  } catch (error) {
+    console.error('Error fetching assets:', error);
+    throw error;
   }
 }
 
