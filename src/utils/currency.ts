@@ -1,4 +1,4 @@
-export function getCurrencySymbol(currency: string = "USD"): string {
+export function getCurrencySymbol(currency = "USD"): string {
   const symbols: { [key: string]: string } = {
     USD: "$",
     EUR: "€",

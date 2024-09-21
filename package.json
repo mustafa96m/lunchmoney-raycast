@@ -3,8 +3,8 @@
     "name": "lunchmoney",
     "title": "Lunch Money",
     "description": "Lunch Money is a personal finance app that helps you track your spending, manage your budget, and reach your financial goals.",
-    "icon": "./assets/icon.png",
-    "author": "Soof",
+    "icon": "icon.png",
+    "author": "mustafa",
     "license": "MIT",
     "commands": [
         {
@@ -39,7 +39,10 @@
     },
     "scripts": {
         "build": "ray build -e dist",
-        "dev": "ray develop"
+        "dev": "ray develop",
+        "publish": "ray publish",
+        "lint": "ray lint",
+        "format": "ray format"
     },
     "preferences": [
         {

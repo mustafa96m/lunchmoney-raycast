@@ -2,11 +2,11 @@ import { ActionPanel, List } from "@raycast/api";
 import { Filter, Transaction } from "../types";
 import AddExpenseAction from "./AddExpenseAction";
 
-function EmptyView(props: { 
-  transactions: Transaction[]; 
-  filter: Filter; 
-  searchText: string; 
-  onCreate: (transaction: Omit<Transaction, "id" | "status">) => void 
+function EmptyView(props: {
+  transactions: Transaction[];
+  filter: Filter;
+  searchText: string;
+  onCreate: (transaction: Omit<Transaction, "id" | "status">) => void;
 }) {
   const { transactions, filter, searchText, onCreate } = props;
 
