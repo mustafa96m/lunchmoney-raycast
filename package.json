@@ -3,7 +3,7 @@
     "name": "lunchmoney",
     "title": "Lunch Money",
     "description": "Lunch Money is a personal finance app that helps you track your spending, manage your budget, and reach your financial goals.",
-    "icon": "assets/icon.png",
+    "icon": "./assets/icon.png",
     "author": "Soof",
     "license": "MIT",
     "commands": [
@@ -11,6 +11,12 @@
             "name": "index",
             "title": "Browse",
             "description": "Browse your transactions",
+            "mode": "view"
+        },
+        {
+            "name": "add-expense",
+            "title": "Add Expense",
+            "description": "Quickly add a new expense",
             "mode": "view"
         }
     ],
@@ -51,5 +57,12 @@
             "description": "Select your preferred default currency for displaying amounts.",
             "required": true
         }
-    ]
+    ],
+    "categories": ["Finance"],
+    "version": "1.0.0",
+    "keywords": ["finance", "budget", "transactions", "money", "lunch money", "lunchmoney", "personal finance"],
+    "repository": "https://github.com/mustafa96m/raycast-lunchmoney",
+    "bugs": {
+        "url": "https://github.com/mustafa96m/raycast-lunchmoney/issues"
+    }
 }

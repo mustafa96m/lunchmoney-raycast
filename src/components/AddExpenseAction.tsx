@@ -11,7 +11,12 @@ function AddExpenseAction(props: { defaultTitle?: string; onCreate: (transaction
       icon={Icon.Plus}
       title="Add Expense"
       shortcut={{ modifiers: ["cmd"], key: "n" }}
-      target={<AddExpenseForm defaultTitle={props.defaultTitle} onCreate={props.onCreate} defaultCurrency={preferences.DEFAULT_CURRENCY?.toUpperCase() || "USD"} />}
+      target={<AddExpenseForm 
+        defaultTitle={props.defaultTitle} 
+        onCreate={props.onCreate} 
+        defaultCurrency={preferences.DEFAULT_CURRENCY?.toUpperCase() || "USD"}
+        isLoading={false} // Add this line
+      />}
     />
   );
 }

@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from "react";
-import { Form, Action, ActionPanel, useNavigation } from "@raycast/api";
+import { Form, Action, ActionPanel } from "@raycast/api";
 import { Transaction, Preferences, Category, Asset } from "../types";
 import { fetchCategories, fetchAssets } from "../api";
 import { getPreferenceValues } from "@raycast/api";
@@ -22,11 +22,11 @@ interface AddExpenseFormProps {
   defaultTitle?: string;
   onCreate: (transaction: Omit<Transaction, "id" | "status">) => void;
   defaultCurrency: string;
+  isLoading: boolean;
 }
 
 export default function AddExpenseForm(props: AddExpenseFormProps) {
   const preferences = getPreferenceValues<Preferences>();
-  const { pop } = useNavigation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [assets, setAssets] = useState<Asset[]>([]);
 
@@ -48,11 +48,11 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
   }, []);
 
   const handleSubmit = useCallback(
-    (values: { payee: string; amount: string; category_id: string; date: string; notes?: string; currency: string; to_base: number; asset_id: string }) => {
+    (values: { payee: string; amount: string; category_id: string; date: string; notes?: string; currency: string; asset_id: string }) => {
       const newTransaction: Omit<Transaction, "id" | "status"> = {
         payee: values.payee,
         amount: parseFloat(values.amount),
-        to_base: values.to_base,
+        to_base: 1, // You might want to calculate this based on the selected currency
         category_id: parseInt(values.category_id),
         date: values.date,
         notes: values.notes,
@@ -61,9 +61,8 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
       };
 
       props.onCreate(newTransaction);
-      pop();
     },
-    [props]
+    [props.onCreate, props.defaultCurrency]
   );
 
   return (
@@ -73,6 +72,7 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
           <Action.SubmitForm title="Add Expense" onSubmit={handleSubmit} />
         </ActionPanel>
       }
+      isLoading={props.isLoading}
     >
       <Form.TextField
         id="payee"
