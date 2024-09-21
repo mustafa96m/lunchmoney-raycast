@@ -48,7 +48,15 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
   }, []);
 
   const handleSubmit = useCallback(
-    (values: { payee: string; amount: string; category_id: string; date: string; notes?: string; currency: string; asset_id: string }) => {
+    (values: {
+      payee: string;
+      amount: string;
+      category_id: string;
+      date: string;
+      notes?: string;
+      currency: string;
+      asset_id: string;
+    }) => {
       const newTransaction: Omit<Transaction, "id" | "status"> = {
         payee: values.payee,
         amount: parseFloat(values.amount),
@@ -62,7 +70,7 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
 
       props.onCreate(newTransaction);
     },
-    [props.onCreate, props.defaultCurrency]
+    [props.onCreate, props.defaultCurrency],
   );
 
   return (
@@ -80,11 +88,15 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
         placeholder="Enter payee name"
         defaultValue={props.defaultTitle}
       />
-      <Form.TextField id="amount" title="Amount" placeholder="Enter amount"/>
+      <Form.TextField id="amount" title="Amount" placeholder="Enter amount" />
       <Form.Dropdown id="category_id" title="Category" storeValue>
         <Form.Dropdown.Item title="Select Category" value="" />
         {categories.map((category) => (
-          <Form.Dropdown.Item key={category.id} title={category.name} value={`${category.id}`} />
+          <Form.Dropdown.Item
+            key={category.id}
+            title={category.name}
+            value={`${category.id}`}
+          />
         ))}
       </Form.Dropdown>
       <Form.DatePicker id="date" title="Date" defaultValue={new Date()} />
@@ -92,12 +104,24 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
       <Form.Dropdown id="asset_id" title="Asset" storeValue>
         <Form.Dropdown.Item title="Select Asset" value="" />
         {assets.map((asset) => (
-          <Form.Dropdown.Item key={asset.id} title={`${asset.name} (${asset.currency})`} value={`${asset.id}`} />
+          <Form.Dropdown.Item
+            key={asset.id}
+            title={`${asset.name} (${asset.currency})`}
+            value={`${asset.id}`}
+          />
         ))}
       </Form.Dropdown>
-      <Form.Dropdown id="currency" title="Currency" defaultValue={props.defaultCurrency.toUpperCase()}>
+      <Form.Dropdown
+        id="currency"
+        title="Currency"
+        defaultValue={props.defaultCurrency.toUpperCase()}
+      >
         {VALID_CURRENCIES.map((currency) => (
-          <Form.Dropdown.Item key={currency.code} title={currency.name} value={currency.code} />
+          <Form.Dropdown.Item
+            key={currency.code}
+            title={currency.name}
+            value={currency.code}
+          />
         ))}
       </Form.Dropdown>
     </Form>

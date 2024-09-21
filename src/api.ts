@@ -1,6 +1,12 @@
 import axios from "axios";
 import { getPreferenceValues } from "@raycast/api";
-import { Transaction, Category, RecurringTransaction, Preferences, Asset } from "./types"; // Ensure Preferences is imported
+import {
+  Transaction,
+  Category,
+  RecurringTransaction,
+  Preferences,
+  Asset,
+} from "./types"; // Ensure Preferences is imported
 
 const preferences = getPreferenceValues<Preferences>();
 
@@ -13,7 +19,9 @@ const api = axios.create({
   },
 });
 
-export async function fetchTransactions(defaultCurrency: string = "USD"): Promise<Transaction[]> {
+export async function fetchTransactions(
+  defaultCurrency = "USD",
+): Promise<Transaction[]> {
   try {
     const response = await api.get("/transactions", {
       params: {
@@ -21,12 +29,14 @@ export async function fetchTransactions(defaultCurrency: string = "USD"): Promis
       },
     });
     // Parse amount as number and ensure currency is uppercase
-    const transactions: Transaction[] = response.data.transactions.map((txn: any) => ({
-      ...txn,
-      amount: Number(txn.amount),
-      to_base: Number(txn.to_base),
-      currency: txn.currency.toLowerCase(), // Ensure uppercase
-    }));
+    const transactions: Transaction[] = response.data.transactions.map(
+      (txn: any) => ({
+        ...txn,
+        amount: Number(txn.amount),
+        to_base: Number(txn.to_base),
+        currency: txn.currency.toLowerCase(), // Ensure uppercase
+      }),
+    );
     return transactions;
   } catch (error) {
     console.error("Error fetching transactions:", error);
@@ -34,7 +44,9 @@ export async function fetchTransactions(defaultCurrency: string = "USD"): Promis
   }
 }
 
-export async function fetchRecurrings(defaultCurrency: string = "USD"): Promise<RecurringTransaction[]> {
+export async function fetchRecurrings(
+  defaultCurrency = "USD",
+): Promise<RecurringTransaction[]> {
   try {
     const response = await api.get("/recurring_expenses", {
       params: {
@@ -43,11 +55,12 @@ export async function fetchRecurrings(defaultCurrency: string = "USD"): Promise<
     });
     if (response.data && Array.isArray(response.data.recurring_expenses)) {
       // Parse amount as number and ensure currency is uppercase
-      const recurrings: RecurringTransaction[] = response.data.recurring_expenses.map((rec: any) => ({
-        ...rec,
-        amount: Number(rec.amount),
-        currency: rec.currency.toUpperCase(), // Ensure uppercase
-      }));
+      const recurrings: RecurringTransaction[] =
+        response.data.recurring_expenses.map((rec: any) => ({
+          ...rec,
+          amount: Number(rec.amount),
+          currency: rec.currency.toUpperCase(), // Ensure uppercase
+        }));
       return recurrings;
     } else {
       throw new Error("Invalid response from API");
@@ -60,7 +73,7 @@ export async function fetchRecurrings(defaultCurrency: string = "USD"): Promise<
 
 export async function createTransaction(
   transaction: Omit<Transaction, "id" | "status">,
-  defaultCurrency: string = "USD"
+  defaultCurrency = "USD",
 ): Promise<Transaction> {
   try {
     const payload = {
@@ -84,7 +97,11 @@ export async function createTransaction(
       throw new Error(JSON.stringify(response.data.error));
     }
 
-    if (!response.data || !Array.isArray(response.data.ids) || response.data.ids.length === 0) {
+    if (
+      !response.data ||
+      !Array.isArray(response.data.ids) ||
+      response.data.ids.length === 0
+    ) {
       throw new Error("Invalid response from API");
     }
 
@@ -102,13 +119,16 @@ export async function createTransaction(
   }
 }
 
-export async function updateTransaction(id: number, updates: Partial<Omit<Transaction, 'id' | 'status'>>): Promise<Transaction> {
+export async function updateTransaction(
+  id: number,
+  updates: Partial<Omit<Transaction, "id" | "status">>,
+): Promise<Transaction> {
   try {
     const response = await api.put(`/transactions/${id}`, updates);
     if (response.data && response.data.transaction) {
       return response.data.transaction;
     } else {
-      throw new Error('Invalid response from API');
+      throw new Error("Invalid response from API");
     }
   } catch (error) {
     console.error("Error updating transaction:", error);
@@ -122,14 +142,14 @@ export async function fetchCategories(): Promise<Category[]> {
     if (response.data && Array.isArray(response.data.categories)) {
       return response.data.categories;
     } else {
-      throw new Error('Invalid response format');
+      throw new Error("Invalid response format");
     }
   } catch (error) {
-    console.error('Error fetching categories:', error);
+    console.error("Error fetching categories:", error);
     if (axios.isAxiosError(error)) {
-      console.error('Axios error details:', error.response?.data);
+      console.error("Axios error details:", error.response?.data);
     }
-    throw new Error('Invalid response from API');
+    throw new Error("Invalid response from API");
   }
 }
 
@@ -147,14 +167,13 @@ export async function fetchAssets(): Promise<Asset[]> {
         currency: asset.currency.toUpperCase(),
         type: asset.type_name,
         subtype: asset.subtype_name,
-        status: asset.closed_on ? 'closed' : 'active',
+        status: asset.closed_on ? "closed" : "active",
       }));
     } else {
-      throw new Error('Invalid response format');
+      throw new Error("Invalid response format");
     }
   } catch (error) {
-    console.error('Error fetching assets:', error);
+    console.error("Error fetching assets:", error);
     throw error;
   }
 }
-

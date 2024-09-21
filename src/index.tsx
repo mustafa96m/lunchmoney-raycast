@@ -9,7 +9,12 @@ import {
   Action,
   getPreferenceValues,
 } from "@raycast/api";
-import { Filter, Transaction, RecurringTransaction, Preferences } from "./types";
+import {
+  Filter,
+  Transaction,
+  RecurringTransaction,
+  Preferences,
+} from "./types";
 import AddExpenseAction from "./components/AddExpenseAction";
 import { fetchTransactions, fetchRecurrings, createTransaction } from "./api";
 import { getCurrencySymbol } from "./utils/currency";
@@ -36,8 +41,7 @@ export default function Command() {
     recurringTransactions: [],
     todaysSpending: 0,
     totalSpending: 0,
-    defaultCurrency:
-      preferences.DEFAULT_CURRENCY?.toUpperCase() || "USD", // Normalize to uppercase
+    defaultCurrency: preferences.DEFAULT_CURRENCY?.toUpperCase() || "USD", // Normalize to uppercase
   });
 
   useEffect(() => {
@@ -57,7 +61,7 @@ export default function Command() {
         // Calculate Total Spending
         const totalSpending = allTransactions.reduce(
           (sum, txn) => sum + txn.to_base,
-          0
+          0,
         );
 
         // Sort transactions by date descending and take the latest 10
@@ -67,7 +71,7 @@ export default function Command() {
 
         // Sort recurrings by start_date ascending
         const sortedRecurrings = recurrings.sort((a, b) =>
-          a.start_date < b.start_date ? -1 : 1
+          a.start_date < b.start_date ? -1 : 1,
         );
 
         setState((prev) => ({
@@ -93,12 +97,12 @@ export default function Command() {
   }, [state.defaultCurrency]);
 
   const handleCreate = async (
-    transaction: Omit<Transaction, "id" | "status">
+    transaction: Omit<Transaction, "id" | "status">,
   ) => {
     try {
       const newTransaction = await createTransaction(
         transaction,
-        state.defaultCurrency
+        state.defaultCurrency,
       );
       setState((prev) => ({
         ...prev,
@@ -110,7 +114,7 @@ export default function Command() {
         style: Toast.Style.Success,
         title: "Transaction Added",
         message: `Added ${newTransaction.payee} for ${newTransaction.to_base.toFixed(
-          2
+          2,
         )} ${getCurrencySymbol(newTransaction.currency)}`,
       });
     } catch (error) {
@@ -138,7 +142,9 @@ export default function Command() {
     <List
       isLoading={state.isLoading}
       searchBarPlaceholder="Search transactions..."
-      onSearchTextChange={(text) => setState((prev) => ({ ...prev, searchText: text }))}
+      onSearchTextChange={(text) =>
+        setState((prev) => ({ ...prev, searchText: text }))
+      }
       throttle
     >
       {/* Section: Total Spending */}
@@ -204,7 +210,9 @@ export default function Command() {
               icon={Icon.ArrowClockwise}
               title={recurring.payee || "Unnamed"}
               subtitle={`${recurring.amount.toFixed(2)} ${getCurrencySymbol(recurring.currency)}`}
-              accessories={[{ text: `Next: ${formatDate(recurring.start_date)}` }]}
+              accessories={[
+                { text: `Next: ${formatDate(recurring.start_date)}` },
+              ]}
             />
           ))
         ) : (

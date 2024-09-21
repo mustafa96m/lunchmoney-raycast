@@ -57,5 +57,5 @@ export interface Asset {
   currency: string;
   type: string;
   subtype: string | null;
-  status: 'active' | 'closed';
+  status: "active" | "closed";
 }

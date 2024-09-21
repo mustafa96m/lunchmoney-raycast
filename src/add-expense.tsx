@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { showToast, Toast, popToRoot, showHUD,getPreferenceValues } from "@raycast/api";
+import {
+  showToast,
+  Toast,
+  popToRoot,
+  showHUD,
+  getPreferenceValues,
+} from "@raycast/api";
 import AddExpenseForm from "./components/AddExpenseForm";
 import { Transaction } from "./types";
 import { createTransaction } from "./api";
@@ -16,7 +22,7 @@ export default function AddExpense() {
       await showHUD("Expense added successfully");
       await popToRoot(); // Navigate back to the root command (index)
     } catch (error) {
-      console.error('Failed to create transaction:', error);
+      console.error("Failed to create transaction:", error);
       await showHUD("Failed to add expense");
     } finally {
       setIsLoading(false);
