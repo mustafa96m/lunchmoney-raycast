@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
 import { Form, Action, ActionPanel, useNavigation } from "@raycast/api";
-import { Transaction, Preferences, Category } from "../types";
-import { fetchCategories } from "../api";
+import { Transaction, Preferences, Category, Asset } from "../types";
+import { fetchCategories, fetchAssets } from "../api";
 import { getPreferenceValues } from "@raycast/api";
 
 const VALID_CURRENCIES = [
@@ -28,22 +28,27 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
   const preferences = getPreferenceValues<Preferences>();
   const { pop } = useNavigation();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [assets, setAssets] = useState<Asset[]>([]);
 
   useEffect(() => {
-    async function loadCategories() {
+    async function loadData() {
       try {
-        const fetchedCategories = await fetchCategories();
+        const [fetchedCategories, fetchedAssets] = await Promise.all([
+          fetchCategories(),
+          fetchAssets(),
+        ]);
         setCategories(fetchedCategories);
+        setAssets(fetchedAssets);
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error("Error fetching data:", error);
       }
     }
 
-    loadCategories();
+    loadData();
   }, []);
 
   const handleSubmit = useCallback(
-    (values: { payee: string; amount: string; category_id: string; date: string; notes?: string; currency: string; to_base: number }) => {
+    (values: { payee: string; amount: string; category_id: string; date: string; notes?: string; currency: string; to_base: number; asset_id: string }) => {
       const newTransaction: Omit<Transaction, "id" | "status"> = {
         payee: values.payee,
         amount: parseFloat(values.amount),
@@ -51,7 +56,8 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
         category_id: parseInt(values.category_id),
         date: values.date,
         notes: values.notes,
-        currency: (values.currency || props.defaultCurrency).toLowerCase(), // Ensure uppercase
+        currency: (values.currency || props.defaultCurrency).toLowerCase(),
+        asset_id: parseInt(values.asset_id),
       };
 
       props.onCreate(newTransaction);
@@ -83,6 +89,12 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
       </Form.Dropdown>
       <Form.DatePicker id="date" title="Date" defaultValue={new Date()} />
       <Form.TextArea id="notes" title="Notes" placeholder="Optional notes" />
+      <Form.Dropdown id="asset_id" title="Asset" storeValue>
+        <Form.Dropdown.Item title="Select Asset" value="" />
+        {assets.map((asset) => (
+          <Form.Dropdown.Item key={asset.id} title={`${asset.name} (${asset.currency})`} value={`${asset.id}`} />
+        ))}
+      </Form.Dropdown>
       <Form.Dropdown id="currency" title="Currency" defaultValue={props.defaultCurrency.toUpperCase()}>
         {VALID_CURRENCIES.map((currency) => (
           <Form.Dropdown.Item key={currency.code} title={currency.name} value={currency.code} />
