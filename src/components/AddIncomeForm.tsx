@@ -18,14 +18,14 @@ const VALID_CURRENCIES = [
   { code: "IQD", name: "Iraqi Dinar" },
 ];
 
-interface AddExpenseFormProps {
+interface AddIncomeFormProps {
   defaultTitle?: string;
   onCreate: (transaction: Omit<Transaction, "id" | "status">) => void;
   defaultCurrency: string;
   isLoading: boolean;
 }
 
-export default function AddExpenseForm(props: AddExpenseFormProps) {
+export default function AddIncomeForm(props: AddIncomeFormProps) {
   const preferences = getPreferenceValues<Preferences>();
   const [categories, setCategories] = useState<Category[]>([]);
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -37,7 +37,8 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
           fetchCategories(),
           fetchAssets(),
         ]);
-        setCategories(fetchedCategories);
+        const incomeCategories = fetchedCategories.filter((category) => category.is_income);
+        setCategories(incomeCategories);
         setAssets(fetchedAssets);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -59,15 +60,15 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
     }) => {
       const newTransaction: Omit<Transaction, "id" | "status"> = {
         payee: values.payee,
-        amount: parseFloat(values.amount),
-        to_base: 1, // You might want to calculate this based on the selected currency
+        amount: `-${parseFloat(values.amount)}`,
+        to_base: 1, // Adjust if necessary
         category_id: parseInt(values.category_id),
         date: values.date,
         notes: values.notes,
         currency: (values.currency || props.defaultCurrency).toLowerCase(),
         asset_id: parseInt(values.asset_id),
-        is_income: false, // Set this for expense
-        debit_as_negative: false, // Ensure this is false for expenses
+        is_income: true,
+        debit_as_negative: false, // Set this to true for income
       };
 
       props.onCreate(newTransaction);
@@ -79,15 +80,15 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
     <Form
       actions={
         <ActionPanel>
-          <Action.SubmitForm title="Add Expense" onSubmit={handleSubmit} />
+          <Action.SubmitForm title="Add Income" onSubmit={handleSubmit} />
         </ActionPanel>
       }
       isLoading={props.isLoading}
     >
       <Form.TextField
         id="payee"
-        title="Payee"
-        placeholder="Enter payee name"
+        title="Source"
+        placeholder="Enter income source"
         defaultValue={props.defaultTitle}
       />
       <Form.TextField id="amount" title="Amount" placeholder="Enter amount" />
@@ -103,8 +104,8 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
       </Form.Dropdown>
       <Form.DatePicker id="date" title="Date" defaultValue={new Date()} />
       <Form.TextArea id="notes" title="Notes" placeholder="Optional notes" />
-      <Form.Dropdown id="asset_id" title="Asset" storeValue>
-        <Form.Dropdown.Item title="Select Asset" value="" />
+      <Form.Dropdown id="asset_id" title="Account" storeValue>
+        <Form.Dropdown.Item title="Select Account" value="" />
         {assets.map((asset) => (
           <Form.Dropdown.Item
             key={asset.id}

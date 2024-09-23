@@ -25,16 +25,17 @@ export async function fetchTransactions(
   try {
     const response = await api.get("/transactions", {
       params: {
-        currency: defaultCurrency.toLowerCase(), // Pass uppercase currency if API supports
+        currency: defaultCurrency.toLowerCase(),
       },
     });
-    // Parse amount as number and ensure currency is uppercase
     const transactions: Transaction[] = response.data.transactions.map(
       (txn: any) => ({
         ...txn,
         amount: Number(txn.amount),
         to_base: Number(txn.to_base),
-        currency: txn.currency.toLowerCase(), // Ensure uppercase
+        currency: txn.currency.toLowerCase(),
+        is_income: txn.is_income || false,
+        debit_as_negative: txn.debit_as_negative || false, // Add this line
       }),
     );
     return transactions;
@@ -73,7 +74,6 @@ export async function fetchRecurrings(
 
 export async function createTransaction(
   transaction: Omit<Transaction, "id" | "status">,
-  defaultCurrency = "USD",
 ): Promise<Transaction> {
   try {
     const payload = {
@@ -86,6 +86,8 @@ export async function createTransaction(
           currency: transaction.currency,
           notes: transaction.notes,
           asset_id: transaction.asset_id,
+          is_income: transaction.is_income || false,
+          debit_as_negative: transaction.debit_as_negative || false, // Add this line
         },
       ],
     };
