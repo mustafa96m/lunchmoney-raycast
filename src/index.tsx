@@ -16,6 +16,7 @@ import {
   Preferences,
 } from "./types";
 import AddExpenseAction from "./components/AddExpenseAction";
+import AddIncomeAction from "./components/AddIncomeAction";
 import { fetchTransactions, fetchRecurrings, createTransaction } from "./api";
 import { getCurrencySymbol } from "./utils/currency";
 
@@ -58,11 +59,11 @@ export default function Command() {
           .filter((txn) => txn.date === today)
           .reduce((sum, txn) => sum + txn.to_base, 0);
 
-        // Calculate Total Spending
-        const totalSpending = allTransactions.reduce(
-          (sum, txn) => sum + txn.to_base,
-          0,
-        );
+        // Adjust total spending calculation
+        const totalSpending = allTransactions.reduce((sum, txn) => {
+          const amount = txn.debit_as_negative ? -txn.to_base : txn.to_base;
+          return sum + amount;
+        }, 0);
 
         // Sort transactions by date descending and take the latest 10
         const latestTransactions = allTransactions
@@ -101,8 +102,7 @@ export default function Command() {
   ) => {
     try {
       const newTransaction = await createTransaction(
-        transaction,
-        state.defaultCurrency,
+        transaction
       );
       setState((prev) => ({
         ...prev,
@@ -156,6 +156,7 @@ export default function Command() {
             <ActionPanel>
               <ActionPanel.Section>
                 <AddExpenseAction onCreate={handleCreate} />
+                <AddIncomeAction onCreate={handleCreate} />
               </ActionPanel.Section>
             </ActionPanel>
           }
@@ -177,9 +178,9 @@ export default function Command() {
             <List.Item
               key={transaction.id}
               icon={
-                transaction.status === "cleared"
-                  ? { source: Icon.Checkmark, tintColor: Color.Green }
-                  : { source: Icon.Circle, tintColor: Color.Red }
+                transaction.is_income
+                  ? { source: Icon.ChevronUp, tintColor: Color.Green }
+                  : { source: Icon.ChevronDown, tintColor: Color.Red }
               }
               title={transaction.payee}
               subtitle={`${transaction.to_base.toFixed(2)} ${getCurrencySymbol(transaction.currency)}`}
@@ -188,6 +189,7 @@ export default function Command() {
                 <ActionPanel>
                   <ActionPanel.Section>
                     <AddExpenseAction onCreate={handleCreate} />
+                    <AddIncomeAction onCreate={handleCreate} />
                   </ActionPanel.Section>
                 </ActionPanel>
               }

@@ -18,6 +18,12 @@
             "title": "Add Expense",
             "description": "Quickly add a new expense",
             "mode": "view"
+        },
+        {
+            "name": "add-income",
+            "title": "Add Income",
+            "description": "Quickly add new income",
+            "mode": "view"
         }
     ],
     "dependencies": {

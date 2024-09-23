@@ -8,13 +8,15 @@ export interface Transaction {
   id: number;
   date: string;
   payee: string;
-  amount: number;
+  amount: number | string;
   to_base: number;
   currency: string;
   notes?: string;
   category_id?: number;
   status: "cleared" | "uncleared" | "recurring";
   asset_id: number;
+  is_income?: boolean;
+  debit_as_negative?: boolean; // Add this line
 }
 
 export interface Category {
