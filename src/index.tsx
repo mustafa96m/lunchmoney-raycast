@@ -190,6 +190,12 @@ export default function Command() {
                   <ActionPanel.Section>
                     <AddExpenseAction onCreate={handleCreate} />
                     <AddIncomeAction onCreate={handleCreate} />
+                    {/* Open in Browser Action */}
+                    <Action.OpenInBrowser
+                      title="Open in Browser"
+                      url={`https://my.lunchmoney.app/#/transactions/${transaction.id}`}
+                      shortcut={{ modifiers: ["cmd"], key: "o" }}
+                    />
                   </ActionPanel.Section>
                 </ActionPanel>
               }
