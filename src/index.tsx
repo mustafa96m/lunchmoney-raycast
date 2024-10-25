@@ -19,16 +19,17 @@ import AddExpenseAction from "./components/AddExpenseAction";
 import AddIncomeAction from "./components/AddIncomeAction";
 import { fetchTransactions, fetchRecurrings, createTransaction } from "./api";
 import { getCurrencySymbol } from "./utils/currency";
+import SMSMessages from "./components/SMSMessages"; // Import the new component
 
 type State = {
   filter: Filter;
   isLoading: boolean;
   searchText: string;
-  transactions: Transaction[]; // Latest Transactions
+  transactions: Transaction[];
   recurringTransactions: RecurringTransaction[];
   todaysSpending: number;
   totalSpending: number;
-  defaultCurrency: string; // Added defaultCurrency to state
+  defaultCurrency: string;
 };
 
 export default function Command() {
@@ -42,7 +43,7 @@ export default function Command() {
     recurringTransactions: [],
     todaysSpending: 0,
     totalSpending: 0,
-    defaultCurrency: preferences.DEFAULT_CURRENCY?.toUpperCase() || "USD", // Normalize to uppercase
+    defaultCurrency: preferences.DEFAULT_CURRENCY?.toUpperCase() || "USD",
   });
 
   useEffect(() => {
@@ -50,27 +51,23 @@ export default function Command() {
       try {
         const today = new Date().toISOString().split("T")[0];
         const [allTransactions, recurrings] = await Promise.all([
-          fetchTransactions(state.defaultCurrency), // Pass defaultCurrency if API supports
+          fetchTransactions(state.defaultCurrency),
           fetchRecurrings(state.defaultCurrency),
         ]);
 
-        // Calculate Today's Spending
         const todaysSpending = allTransactions
           .filter((txn) => txn.date === today)
           .reduce((sum, txn) => sum + txn.to_base, 0);
 
-        // Adjust total spending calculation
         const totalSpending = allTransactions.reduce((sum, txn) => {
           const amount = txn.debit_as_negative ? -txn.to_base : txn.to_base;
           return sum + amount;
         }, 0);
 
-        // Sort transactions by date descending and take the latest 10
         const latestTransactions = allTransactions
           .sort((a, b) => (a.date < b.date ? 1 : -1))
           .slice(0, 10);
 
-        // Sort recurrings by start_date ascending
         const sortedRecurrings = recurrings.sort((a, b) =>
           a.start_date < b.start_date ? -1 : 1,
         );
@@ -101,9 +98,7 @@ export default function Command() {
     transaction: Omit<Transaction, "id" | "status">,
   ) => {
     try {
-      const newTransaction = await createTransaction(
-        transaction
-      );
+      const newTransaction = await createTransaction(transaction);
       setState((prev) => ({
         ...prev,
         transactions: [newTransaction, ...prev.transactions],
@@ -229,6 +224,22 @@ export default function Command() {
             icon={{ source: Icon.Calendar, tintColor: Color.SecondaryText }}
           />
         )}
+      </List.Section>
+
+      {/* New Section: SMS Messages */}
+      <List.Section title="SMS Messages">
+        <List.Item
+          title="View SMS Messages"
+          icon={{ source: Icon.Message, tintColor: Color.Blue }}
+          actions={
+            <ActionPanel>
+              <Action.Push
+                title="Browse SMS Messages"
+                target={<SMSMessages />}
+              />
+            </ActionPanel>
+          }
+        />
       </List.Section>
     </List>
   );

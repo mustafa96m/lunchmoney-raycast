@@ -24,6 +24,12 @@
             "title": "Add Income",
             "description": "Quickly add new income",
             "mode": "view"
+        },
+        {
+            "name": "view-sms",
+            "title": "SMS",
+            "description": "View latest SMS messages",
+            "mode": "view"
         }
     ],
     "dependencies": {

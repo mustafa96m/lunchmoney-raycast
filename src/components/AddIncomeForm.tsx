@@ -1,8 +1,10 @@
+import React from "react";
 import { useCallback, useState, useEffect } from "react";
 import { Form, Action, ActionPanel } from "@raycast/api";
 import { Transaction, Preferences, Category, Asset } from "../types";
 import { fetchCategories, fetchAssets } from "../api";
 import { getPreferenceValues } from "@raycast/api";
+import { AddIncomeFormProps } from "./AddIncomeForm.types";
 
 const VALID_CURRENCIES = [
   { code: "USD", name: "US Dollar" },
@@ -18,14 +20,23 @@ const VALID_CURRENCIES = [
   { code: "IQD", name: "Iraqi Dinar" },
 ];
 
-interface AddIncomeFormProps {
-  defaultTitle?: string;
+export interface AddIncomeFormProps {
   onCreate: (transaction: Omit<Transaction, "id" | "status">) => void;
   defaultCurrency: string;
   isLoading: boolean;
+  initialAmount?: string;
+  initialDate?: string;
+  initialSource?: string;
 }
 
-export default function AddIncomeForm(props: AddIncomeFormProps) {
+const AddIncomeForm: React.FC<AddIncomeFormProps> = ({
+  onCreate,
+  defaultCurrency,
+  isLoading,
+  initialAmount,
+  initialDate,
+  initialSource,
+}) => {
   const preferences = getPreferenceValues<Preferences>();
   const [categories, setCategories] = useState<Category[]>([]);
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -65,15 +76,15 @@ export default function AddIncomeForm(props: AddIncomeFormProps) {
         category_id: parseInt(values.category_id),
         date: values.date,
         notes: values.notes,
-        currency: (values.currency || props.defaultCurrency).toLowerCase(),
+        currency: (values.currency || defaultCurrency).toLowerCase(),
         asset_id: parseInt(values.asset_id),
         is_income: true,
         debit_as_negative: false, // Set this to true for income
       };
 
-      props.onCreate(newTransaction);
+      onCreate(newTransaction);
     },
-    [props.onCreate, props.defaultCurrency],
+    [onCreate, defaultCurrency],
   );
 
   return (
@@ -83,15 +94,15 @@ export default function AddIncomeForm(props: AddIncomeFormProps) {
           <Action.SubmitForm title="Add Income" onSubmit={handleSubmit} />
         </ActionPanel>
       }
-      isLoading={props.isLoading}
+      isLoading={isLoading}
     >
       <Form.TextField
         id="payee"
         title="Source"
         placeholder="Enter income source"
-        defaultValue={props.defaultTitle}
+        defaultValue={initialSource}
       />
-      <Form.TextField id="amount" title="Amount" placeholder="Enter amount" />
+      <Form.TextField id="amount" title="Amount" placeholder="Enter amount" defaultValue={initialAmount} />
       <Form.Dropdown id="category_id" title="Category" storeValue>
         <Form.Dropdown.Item title="Select Category" value="" />
         {categories.map((category) => (
@@ -102,7 +113,7 @@ export default function AddIncomeForm(props: AddIncomeFormProps) {
           />
         ))}
       </Form.Dropdown>
-      <Form.DatePicker id="date" title="Date" defaultValue={new Date()} />
+      <Form.DatePicker id="date" title="Date" defaultValue={new Date()} defaultValue={initialDate} />
       <Form.TextArea id="notes" title="Notes" placeholder="Optional notes" />
       <Form.Dropdown id="asset_id" title="Account" storeValue>
         <Form.Dropdown.Item title="Select Account" value="" />
@@ -117,7 +128,7 @@ export default function AddIncomeForm(props: AddIncomeFormProps) {
       <Form.Dropdown
         id="currency"
         title="Currency"
-        defaultValue={props.defaultCurrency.toUpperCase()}
+        defaultValue={defaultCurrency.toUpperCase()}
       >
         {VALID_CURRENCIES.map((currency) => (
           <Form.Dropdown.Item
@@ -129,4 +140,6 @@ export default function AddIncomeForm(props: AddIncomeFormProps) {
       </Form.Dropdown>
     </Form>
   );
-}
+};
+
+export default AddIncomeForm;
