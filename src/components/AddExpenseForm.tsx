@@ -23,6 +23,9 @@ interface AddExpenseFormProps {
   onCreate: (transaction: Omit<Transaction, "id" | "status">) => void;
   defaultCurrency: string;
   isLoading: boolean;
+  initialPayee?: string;
+  initialAmount?: string;
+  initialDate?: string;
 }
 
 export default function AddExpenseForm(props: AddExpenseFormProps) {
@@ -88,9 +91,14 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
         id="payee"
         title="Payee"
         placeholder="Enter payee name"
-        defaultValue={props.defaultTitle}
+        defaultValue={props.initialPayee || props.defaultTitle}
       />
-      <Form.TextField id="amount" title="Amount" placeholder="Enter amount" />
+      <Form.TextField
+        id="amount"
+        title="Amount"
+        placeholder="Enter amount"
+        defaultValue={props.initialAmount}
+      />
       <Form.Dropdown id="category_id" title="Category" storeValue>
         <Form.Dropdown.Item title="Select Category" value="" />
         {categories.map((category) => (
@@ -101,7 +109,11 @@ export default function AddExpenseForm(props: AddExpenseFormProps) {
           />
         ))}
       </Form.Dropdown>
-      <Form.DatePicker id="date" title="Date" defaultValue={new Date()} />
+      <Form.DatePicker
+        id="date"
+        title="Date"
+        defaultValue={props.initialDate ? new Date(props.initialDate) : new Date()}
+      />
       <Form.TextArea id="notes" title="Notes" placeholder="Optional notes" />
       <Form.Dropdown id="asset_id" title="Asset" storeValue>
         <Form.Dropdown.Item title="Select Asset" value="" />

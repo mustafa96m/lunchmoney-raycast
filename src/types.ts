@@ -61,3 +61,10 @@ export interface Asset {
   subtype: string | null;
   status: "active" | "closed";
 }
+
+export interface SMSMessage {
+  guid: string;
+  sender: string;
+  message_date: string; // ISO date string
+  text: string;
+}
