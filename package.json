@@ -27,20 +27,21 @@
         }
     ],
     "dependencies": {
-        "@raycast/api": "1.31.0",
-        "axios": "^1.7.7",
-        "nanoid": "^3.3.1"
+        "@raycast/api": "^1.83.4",
+        "@raycast/utils": "^1.18.0",
+        "axios": "^1.7.7"
     },
     "devDependencies": {
-        "@types/node": "~16.10.0",
-        "@types/react": "^17.0.28",
+        "@types/jest": "^29.5.12",
+        "@types/node": "16.10.3",
+        "@types/react": "18.3.2",
         "@typescript-eslint/eslint-plugin": "^5.0.0",
         "@typescript-eslint/parser": "^5.0.0",
         "eslint": "^7.32.0",
         "eslint-config-prettier": "^8.3.0",
-        "eslint-plugin-react": "^7.29.3",
-        "eslint-plugin-react-hooks": "^4.3.0",
-        "react-devtools": "^4.19.2",
+        "jest": "^29.7.0",
+        "prettier": "^2.5.1",
+        "ts-jest": "^29.1.2",
         "typescript": "^4.4.3"
     },
     "scripts": {
@@ -67,9 +68,19 @@
             "required": true
         }
     ],
-    "categories": ["Finance"],
+    "categories": [
+        "Finance"
+    ],
     "version": "1.0.0",
-    "keywords": ["finance", "budget", "transactions", "money", "lunch money", "lunchmoney", "personal finance"],
+    "keywords": [
+        "finance",
+        "budget",
+        "transactions",
+        "money",
+        "lunch money",
+        "lunchmoney",
+        "personal finance"
+    ],
     "repository": "https://github.com/mustafa96m/raycast-lunchmoney",
     "bugs": {
         "url": "https://github.com/mustafa96m/raycast-lunchmoney/issues"
